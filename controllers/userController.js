@@ -70,6 +70,7 @@ exports.user_login_post = ((req, res, next) => {
 // testing endpoint (token)
 exports.user_test_get =  (req, res, next) => {
     const authData = verifyUserToken(req.token);
+    console.log(req.token)
     if(typeof authData === "undefined") {
         res.sendStatus(403);
     } else {
