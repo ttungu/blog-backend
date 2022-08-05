@@ -1,0 +1,4 @@
+upload and download files/images
+pagenation
+save some requests to redis ()
+create a seperate file for verifying token - DONE

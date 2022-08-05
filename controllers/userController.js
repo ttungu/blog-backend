@@ -2,7 +2,9 @@ const bcrypt = require('bcryptjs');
 const { body } = require('express-validator');
 const jwt = require('jsonwebtoken');
 
+
 const User = require('../models/user');
+const jwtToken = require('../misc/jwtToken');
 
 exports.user_index = (req, res) => {
     res.json({
@@ -68,25 +70,18 @@ exports.user_login_post = ((req, res, next) => {
 })
 
 // testing endpoint (token)
-exports.user_test_get =  (req, res, next) => {
-    const authData = verifyUserToken(req.token);
-    console.log(req.token)
-    if(typeof authData === "undefined") {
-        res.sendStatus(403);
-    } else {
-        res.json({
-            message: "Token exists.",
-            authData
-        })
+exports.user_test_get =  [
+    (req, res, next) => jwtToken.checkHeaderForToken(req, res, next),
+    (req, res, next) => {
+        const authData = jwtToken.verifyUserToken(req.token);
+        console.log(req.token)
+        if(typeof authData === "undefined") {
+            res.sendStatus(403);
+        } else {
+            res.json({
+                message: "Token exists.",
+                authData
+            })
+        }
     }
-}
-
-// verifying users token
-function verifyUserToken(token){
-    try {
-        const authData = jwt.verify(token, process.env.JWT_SECRET);
-        return authData;
-    } catch (err) {
-        return;
-    }
-}
+]

@@ -1,46 +1,53 @@
 const jwt = require('jsonwebtoken');
 const { body, validationResult } = require('express-validator');
+const jwtToken = require('../misc/jwtToken');
 
 const Post = require('../models/post');
 const Comment = require('../models/comment')
 
 //get all posts
 //TODO - pagenation
-exports.posts_get = ((req, res, next) => {
-    const authData = verifyUserToken(req.token);
-    console.log(authData.user._id)
-    if (typeof authData === "undefined") {
-        res.sendStatus(403);
-    } else {
-        Post.find().exec((err, posts) => {
-            if (err) return next(err);
-            res.json({
-                posts: posts
-            })
-        });
+exports.posts_get = [
+    (req, res, next) => jwtToken.checkHeaderForToken(req,res,next),
+    (req, res, next) => {
+        const authData = jwtToken.verifyUserToken(req.token);
+        console.log(authData.user._id)
+        if (typeof authData === "undefined") {
+            res.sendStatus(403);
+        } else {
+            Post.find().exec((err, posts) => {
+                if (err) return next(err);
+                res.json({
+                    posts: posts
+                })
+            });
+        }
+    
     }
-
-})
+]
 
 
 // get specific post
-exports.post_get = (req, res, next) => {
-    const authData = verifyUserToken(req.token);
-    if (typeof authData === "undefined") {
-        res.sendStatus(403);
-    } else {
-        Post.find({ "_id": req.params.postid }).exec((err, found_post) => {
-            if (err) return next(err);
-            res.json({
-                post: found_post
+exports.post_get = [
+    (req, res, next) => jwtToken.checkHeaderForToken(req,res,next),
+    (req, res, next) => {
+        const authData = jwtToken.verifyUserToken(req.token);
+        if (typeof authData === "undefined") {
+            res.sendStatus(403);
+        } else {
+            Post.find({ "_id": req.params.postid }).exec((err, found_post) => {
+                if (err) return next(err);
+                res.json({
+                    post: found_post
+                })
             })
-        })
+        }
     }
-
-}
+] 
 
 // post post
 exports.post_post = [
+    (req, res, next) => jwtToken.checkHeaderForToken(req,res,next),
     body("title")
         .trim()
         .escape()
@@ -51,7 +58,7 @@ exports.post_post = [
         .isLength({ min: 1, max: 1000 }).withMessage("Title must be filled and cant exceed 1000 characters."),
     (req, res, next) => {
         // check jwt token validity
-        const authData = verifyUserToken(req.token);
+        const authData = jwtToken.verifyUserToken(req.token);
         if (typeof authData === "undefined") {
             res.sendStatus(403);
         } else {
@@ -79,6 +86,7 @@ exports.post_post = [
 
 // put post
 exports.post_put = [
+    (req, res, next) => jwtToken.checkHeaderForToken(req,res,next),
     body("title")
         .trim()
         .escape()
@@ -89,7 +97,7 @@ exports.post_put = [
         .isLength({ min: 1, max: 1000 }).withMessage("Title must be filled and cant exceed 1000 characters."),
     (req, res, next) => {
         // verify JWT token
-        const authData = verifyUserToken(req.token);
+        const authData = jwtToken.verifyUserToken(req.token);
         if (typeof authData === "undefined") {
             res.sendStatus(403);
         } else {
@@ -124,35 +132,27 @@ exports.post_put = [
 
 
 // delete post
-exports.post_delete = (req, res, next) => {
-    const authData = verifyUserToken(req.token);
-    if (typeof authData === "undefined") {
-        res.sendStatus(403);
-    } else {
-        Comment.find({ "post": req.params.postid }, (err, found_comments) => {
-            if (err) return next(err);
-            if (found_comments.length < 1) {
-                Post.findByIdAndDelete(req.params.postid).exec((err) => {
-                    if (err) return next(err);
-                    res.redirect('/api')
-                })
-            } else {
-                res.json({
-                    message: "You must delete all the comments first",
-                    comments: found_comments
-                })
-            }
-        });
+exports.post_delete = [
+    (req, res, next) => jwtToken.checkHeaderForToken(req,res,next),
+    (req, res, next) => {
+        const authData = jwtToken.verifyUserToken(req.token);
+        if (typeof authData === "undefined") {
+            res.sendStatus(403);
+        } else {
+            Comment.find({ "post": req.params.postid }, (err, found_comments) => {
+                if (err) return next(err);
+                if (found_comments.length < 1) {
+                    Post.findByIdAndDelete(req.params.postid).exec((err) => {
+                        if (err) return next(err);
+                        res.redirect('/api')
+                    })
+                } else {
+                    res.json({
+                        message: "You must delete all the comments first",
+                        comments: found_comments
+                    })
+                }
+            });
+        }   
     }
-
-}
-
-// verifying users token
-function verifyUserToken(token) {
-    try {
-        const authData = jwt.verify(token, process.env.JWT_SECRET);
-        return authData;
-    } catch (err) {
-        return;
-    }
-}
+]
