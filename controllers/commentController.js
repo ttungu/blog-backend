@@ -5,7 +5,7 @@ const jwtToken = require('../misc/jwtToken');
 
 // get all comments (with the same post _id)
 exports.comments_get = [
-    (req, res, next) => jwtToken.checkHeaderForToken(req,res,next),
+    (req, res, next) => jwtToken.checkHeaderForToken(req, res, next),
     (req, res, next) => {
         const authData = jwtToken.verifyUserToken(req.token);
         if (typeof authData == "undefined") {
@@ -23,7 +23,7 @@ exports.comments_get = [
 
 // comment get
 exports.comment_get = [
-    (req, res, next) => jwtToken.checkHeaderForToken(req,res,next),
+    (req, res, next) => jwtToken.checkHeaderForToken(req, res, next),
     (req, res, next) => {
         const authData = jwtToken.verifyUserToken(req.token);
         if (typeof authData == "undefined") {
@@ -39,72 +39,83 @@ exports.comment_get = [
 
 //coment post
 exports.comment_post = [
-    (req, res, next) => jwtToken.checkHeaderForToken(req,res,next),
-    body("author", "Author must be filled").escape().trim().isLength({ min:1, max: 100 }),
+    (req, res, next) => jwtToken.checkHeaderForToken(req, res, next),
+    body("author", "Author must be filled").escape().trim().isLength({ min: 1, max: 100 }),
     body("text", "Text must be filled").escape().trim().isLength({ min: 1, max: 500 }),
     (req, res, next) => {
-        // verify token
-        const authData = jwtToken.verifyUserToken(req.token);
-        if (typeof authData == "undefined") {
-            res.sendStatus(403);
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            res.sendStatus(400);
         } else {
-            //input validation
-            const errors = validationResult(req);
-            if (!errors.isEmpty()) {
-                errors.status = 404;
-                res.json(errors);
+            // verify token
+            const authData = jwtToken.verifyUserToken(req.token);
+            if (typeof authData == "undefined") {
+                res.sendStatus(403);
             } else {
-                const { author, text } = req.body;
-                const { postid } = req.params;
-                const comment = new Comment({
-                    author,
-                    text,
-                    post: req.params.postid
-                }).save((err, saved_comment) => {
-                    if (err) return next(err);
-                    res.redirect(`/api/posts/${postid}/comments/${saved_comment._id}`)
-                })
+                //input validation
+                const errors = validationResult(req);
+                if (!errors.isEmpty()) {
+                    errors.status = 404;
+                    res.json(errors);
+                } else {
+                    const { author, text } = req.body;
+                    const { postid } = req.params;
+                    const comment = new Comment({
+                        author,
+                        text,
+                        post: req.params.postid
+                    }).save((err, saved_comment) => {
+                        if (err) return next(err);
+                        res.redirect(`/api/posts/${postid}/comments/${saved_comment._id}`)
+                    })
+                }
             }
-
         }
+
     }
 ]
 
 //comment put
 exports.comment_put = [
-    (req, res, next) => jwtToken.checkHeaderForToken(req,res,next),
-    body("text", "Text must be filled.").isLength({ min:1, max:1000 }),
+    (req, res, next) => jwtToken.checkHeaderForToken(req, res, next),
+    body("text", "Text must be filled.").isLength({ min: 1, max: 1000 }),
     (req, res, next) => {
-        const authData = jwtToken.verifyUserToken(req.token);
-        if (typeof authData == "undefined") {
-            res.sendStatus(403);
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            res.sendStatus(400);
         } else {
-            const errors = validationResult(req);
-            if (!errors.isEmpty()) {
-                errors.status = 404;
-                res.json(errors);
+            const authData = jwtToken.verifyUserToken(req.token);
+            if (typeof authData == "undefined") {
+                res.sendStatus(403);
             } else {
-                const { text } = req.body;
-                const { postid, commentid } = req.params;
-                const comment = new Comment({
-                    text,
-                    date_edited: Date.now(),
-                    _id: commentid
-                });
-    
-                Comment.findByIdAndUpdate(commentid, comment, (err, result) => {
-                    if (err) return next(err);
-                    if (result == null) { return next(new Error("No comments found.")); }
-                    else { res.redirect(`/api/posts/${postid}/comments/${commentid}`); }
-                })
+                const errors = validationResult(req);
+                if (!errors.isEmpty()) {
+                    errors.status = 404;
+                    res.json(errors);
+                } else {
+                    const { text } = req.body;
+                    const { postid, commentid } = req.params;
+                    const comment = new Comment({
+                        text,
+                        date_edited: Date.now(),
+                        _id: commentid
+                    });
+
+                    Comment.findByIdAndUpdate(commentid, comment, (err, result) => {
+                        if (err) return next(err);
+                        if (result == null) { return next(new Error("No comments found.")); }
+                        else { res.redirect(`/api/posts/${postid}/comments/${commentid}`); }
+                    })
+                }
             }
         }
+
     }
 ]
 
 //comment delete
 exports.comment_delete = [
-    (req, res, next) => jwtToken.checkHeaderForToken(req,res,next),
+    (req, res, next) => jwtToken.checkHeaderForToken(req, res, next),
     (req, res, next) => {
         const authData = jwtToken.verifyUserToken(req.token);
         if (typeof authData == "undefined") {

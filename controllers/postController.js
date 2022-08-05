@@ -8,7 +8,7 @@ const Comment = require('../models/comment')
 //get all posts
 //TODO - pagenation
 exports.posts_get = [
-    (req, res, next) => jwtToken.checkHeaderForToken(req,res,next),
+    (req, res, next) => jwtToken.checkHeaderForToken(req, res, next),
     (req, res, next) => {
         const authData = jwtToken.verifyUserToken(req.token);
         console.log(authData.user._id)
@@ -22,14 +22,14 @@ exports.posts_get = [
                 })
             });
         }
-    
+
     }
 ]
 
 
 // get specific post
 exports.post_get = [
-    (req, res, next) => jwtToken.checkHeaderForToken(req,res,next),
+    (req, res, next) => jwtToken.checkHeaderForToken(req, res, next),
     (req, res, next) => {
         const authData = jwtToken.verifyUserToken(req.token);
         if (typeof authData === "undefined") {
@@ -43,11 +43,11 @@ exports.post_get = [
             })
         }
     }
-] 
+]
 
 // post post
 exports.post_post = [
-    (req, res, next) => jwtToken.checkHeaderForToken(req,res,next),
+    (req, res, next) => jwtToken.checkHeaderForToken(req, res, next),
     body("title")
         .trim()
         .escape()
@@ -57,36 +57,41 @@ exports.post_post = [
         .escape()
         .isLength({ min: 1, max: 1000 }).withMessage("Title must be filled and cant exceed 1000 characters."),
     (req, res, next) => {
-        // check jwt token validity
-        const authData = jwtToken.verifyUserToken(req.token);
-        if (typeof authData === "undefined") {
-            res.sendStatus(403);
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            res.sendStatus(400);
         } else {
-            // input validation
-            const errors = validationResult(req);
-            if (!errors.isEmpty()) {
-                errors.status = 400;
-                res.json(errors)
+            // check jwt token validity
+            const authData = jwtToken.verifyUserToken(req.token);
+            if (typeof authData === "undefined") {
+                res.sendStatus(403);
             } else {
-                const post = new Post({
-                    author: authData.user._id,
-                    title: req.body.title,
-                    text: req.body.text,
-                    isPublished: req.body.isPublished
-                }).save((err, savedPost) => {
-                    if (err) next(err);
-                    res.redirect(`/api/posts/${savedPost._id}`);
-                })
+                // input validation
+                const errors = validationResult(req);
+                if (!errors.isEmpty()) {
+                    errors.status = 400;
+                    res.json(errors)
+                } else {
+                    const post = new Post({
+                        author: authData.user._id,
+                        title: req.body.title,
+                        text: req.body.text,
+                        isPublished: req.body.isPublished
+                    }).save((err, savedPost) => {
+                        if (err) next(err);
+                        res.redirect(`/api/posts/${savedPost._id}`);
+                    })
+                }
             }
-
         }
+
 
     }
 ]
 
 // put post
 exports.post_put = [
-    (req, res, next) => jwtToken.checkHeaderForToken(req,res,next),
+    (req, res, next) => jwtToken.checkHeaderForToken(req, res, next),
     body("title")
         .trim()
         .escape()
@@ -96,36 +101,40 @@ exports.post_put = [
         .escape()
         .isLength({ min: 1, max: 1000 }).withMessage("Title must be filled and cant exceed 1000 characters."),
     (req, res, next) => {
-        // verify JWT token
-        const authData = jwtToken.verifyUserToken(req.token);
-        if (typeof authData === "undefined") {
-            res.sendStatus(403);
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            res.sendStatus(400);
         } else {
-            // input validation
-            const errors = validationResult(req);
-            if (!errors.isEmpty()) {
-                errors.status = 400;
-                res.json(errors)
+            // verify JWT token
+            const authData = jwtToken.verifyUserToken(req.token);
+            if (typeof authData === "undefined") {
+                res.sendStatus(403);
             } else {
-                const post = new Post({
-                    _id: req.params.postid,
-                    title: req.body.title,
-                    text: req.body.text,
-                    date_edited: Date.now(),
-                    isPublished: req.body.isPublished
-                });
-                Post.findByIdAndUpdate(req.params.postid, post, { new: true }, (err, result) => {
-                    if (err) return next(err);
-                    if (result == null) {
-                        return next(new Error("No post found"));
-                    } else {
-                        res.redirect(`/api/posts/${req.params.postid}`);
-                    }
-    
-                })
+                // input validation
+                const errors = validationResult(req);
+                if (!errors.isEmpty()) {
+                    errors.status = 400;
+                    res.json(errors)
+                } else {
+                    const post = new Post({
+                        _id: req.params.postid,
+                        title: req.body.title,
+                        text: req.body.text,
+                        date_edited: Date.now(),
+                        isPublished: req.body.isPublished
+                    });
+                    Post.findByIdAndUpdate(req.params.postid, post, { new: true }, (err, result) => {
+                        if (err) return next(err);
+                        if (result == null) {
+                            return next(new Error("No post found"));
+                        } else {
+                            res.redirect(`/api/posts/${req.params.postid}`);
+                        }
+                    })
+                }
             }
-            
         }
+
 
     }
 ]
@@ -133,7 +142,7 @@ exports.post_put = [
 
 // delete post
 exports.post_delete = [
-    (req, res, next) => jwtToken.checkHeaderForToken(req,res,next),
+    (req, res, next) => jwtToken.checkHeaderForToken(req, res, next),
     (req, res, next) => {
         const authData = jwtToken.verifyUserToken(req.token);
         if (typeof authData === "undefined") {
@@ -153,6 +162,6 @@ exports.post_delete = [
                     })
                 }
             });
-        }   
+        }
     }
 ]
