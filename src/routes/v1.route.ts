@@ -1,16 +1,18 @@
-import express, { Express, Request, Response } from "express";
+import express from "express";
 import * as postController from "../posts/posts.controller";
 import * as commentController from "../comments/comments.controller";
-import { index_get } from "../users/user.controller";
+import * as userController from "../users/user.controller";
 const router = express.Router();
 
 /* USER */
 //get
-router.get("/", index_get);
+router.get("/", userController.index_get);
 
 //create
+router.post("/signup", userController.user_signup);
 
-//update
+//login
+router.post("/login", userController.user_login);
 
 //delete
 
