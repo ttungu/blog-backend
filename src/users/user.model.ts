@@ -3,6 +3,7 @@ import { Schema, model } from "mongoose";
 export interface UserInterace {
     username: string;
     password: string;
+    email: string;
 }
 
 const UserSchema = new Schema({
@@ -14,6 +15,7 @@ const UserSchema = new Schema({
         dropDubs: true,
     },
     password: { type: String, required: true, maxLength: 100 },
+    email: { type: String, required: true, maxLength: 100 },
 });
 
 export default model<UserInterace>("User", UserSchema);

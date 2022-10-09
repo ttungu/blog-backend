@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from "express";
-import { getUser, createUser } from "./user.service";
+import { getUser, createUser, getUsers, deleteUser } from "./user.service";
+import { sendRegEmail } from "../middleware/mail";
 import * as bcrypt from "bcryptjs";
 import {
     checkHeaderForToken,
@@ -21,14 +22,15 @@ export const index_get = [
     },
 ];
 
+//
 export const user_signup = async (
     req: Request,
     res: Response,
     next: NextFunction
 ): Promise<any> => {
     try {
-        const { username, password } = req.body;
-        const found_user = await getUser({ username });
+        const { username, password, email } = req.body;
+        const found_user = await getUser({ username }, { email });
         if (found_user == null) {
             //bcrypt - vytvor uzivatele
             bcrypt.hash(password, 10, async (err, hashedPwd) => {
@@ -36,10 +38,12 @@ export const user_signup = async (
                 const user = {
                     username,
                     password: hashedPwd,
+                    email,
                 };
                 await createUser(user);
                 res.json({ message: "User created" });
             });
+            await sendRegEmail(email, username);
         } else {
             res.status(400).send({ message: "User already exists." });
         }
@@ -48,6 +52,7 @@ export const user_signup = async (
     }
 };
 
+// login either with username or email
 export const user_login = async (
     req: Request,
     res: Response,
@@ -55,16 +60,14 @@ export const user_login = async (
 ): Promise<any> => {
     try {
         const { username, password } = req.body;
-        const found_user = await getUser({ username });
+        const found_user = await getUser({ username }, { email: username });
         // check if user exists
         if (found_user != null) {
             //check pwd
             const isCorrectPwd = await checkPassword(
                 password,
-                found_user.password,
-                next
+                found_user.password
             );
-            console.log(isCorrectPwd);
             if (isCorrectPwd) {
                 // sign user (jwt)
                 const token = signUser(found_user);
@@ -84,10 +87,38 @@ export const user_login = async (
     }
 };
 
+export const users_get = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+): Promise<void> => {
+    try {
+        const users = await getUsers();
+        res.json({ users });
+    } catch (e: any) {
+        throw new Error(e);
+    }
+};
+// FINISH THIS
+// export const user_delete = async (
+//     req: Request,
+//     res: Response
+// ): Promise<void> => {
+//     try {
+//         const { username, email, password } = req.body;
+//         const found_user = await getUser({ username }, { email });
+//         if (found_user != null) {
+//             await deleteUser(username);
+//         }
+
+//     } catch (e: any) {
+//         throw new Error(e);
+//     }
+// };
+
 const checkPassword = async (
     pwd: string,
-    hashedPwd: string,
-    next: NextFunction
+    hashedPwd: string
 ): Promise<boolean> => {
     try {
         return bcrypt.compare(pwd, hashedPwd);

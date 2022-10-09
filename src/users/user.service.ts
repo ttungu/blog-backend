@@ -6,7 +6,18 @@ export const createUser = async (input: UserInterace): Promise<any> => {
 };
 
 export const getUser = async (
-    filter: FilterQuery<UserInterace>
+    filter1: FilterQuery<UserInterace>,
+    filter2: FilterQuery<UserInterace>
 ): Promise<any> => {
-    return await User.findOne(filter);
+    return await User.findOne({ $or: [filter1, filter2] });
+};
+
+export const getUsers = async (): Promise<UserInterace[]> => {
+    return await User.find();
+};
+
+export const deleteUser = async (
+    filter: FilterQuery<UserInterace>
+): Promise<void> => {
+    await User.findOneAndDelete();
 };

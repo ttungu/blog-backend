@@ -16,6 +16,9 @@ router.post("/login", userController.user_login);
 
 //delete
 
+// get users
+router.get("/users", userController.users_get);
+
 /* POSTS */
 //get all posts
 router.get("/posts", postController.posts_get);
