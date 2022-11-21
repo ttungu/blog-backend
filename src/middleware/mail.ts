@@ -4,8 +4,8 @@ const transporter = createTransport({
     service: "gmail",
     auth: {
         // add these to .env file
-        user: "testnodejs02@gmail.com",
-        pass: "bnrnzdlhjwlsfnxq",
+        user: process.env.G_USER,
+        pass: process.env.G_PWD,
     },
 });
 
