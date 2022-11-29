@@ -12,5 +12,5 @@
 
 -   Node.js
 -   Express.js
--   MongoDB with Mongoose
+-   MongoDB (Mongoose)
 -   TypeScript
