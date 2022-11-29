@@ -1,4 +1,6 @@
 import { createTestAccount, createTransport } from "nodemailer";
+import * as dotenv from "dotenv";
+dotenv.config();
 
 const transporter = createTransport({
     service: "gmail",

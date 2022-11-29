@@ -1,5 +1,56 @@
 import { Schema, model, Types } from "mongoose";
 
+/**
+ * @openapi
+ * components:
+ *  schemas:
+ *    Comment:
+ *      type: object
+ *      required:
+ *        - author
+ *        - text
+ *        - post
+ *      properties:
+ *        author:
+ *          type: string
+ *        text:
+ *          type: string
+ *        post:
+ *          type: string
+ *        date_created:
+ *          type: string
+ *          format: date-time
+ *        date_edited:
+ *          type: string
+ *          format: date-time
+ *    CreateCommentInput:
+ *      type: object
+ *      required:
+ *        - author
+ *        - text
+ *        - post
+ *      properties:
+ *        author:
+ *          type: string
+ *        text:
+ *          type: string
+ *        post:
+ *          type: string
+ *    UpdateCommentInput:
+ *      type: object
+ *      required:
+ *        - author
+ *        - text
+ *        - post
+ *      properties:
+ *        author:
+ *          type: string
+ *        text:
+ *          type: string
+ *        post:
+ *          type: string
+ */
+
 export interface CommentInterface {
     author: string;
     text: string;

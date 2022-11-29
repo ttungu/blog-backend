@@ -7,6 +7,78 @@ export interface PostInterface {
     date_edited: Date;
     isPublished: boolean;
 }
+/**
+ * @openapi
+ * components:
+ *  schemas:
+ *    Post:
+ *      type: object
+ *      required:
+ *        - author
+ *        - title
+ *        - text
+ *        - date_created
+ *        - date_edited
+ *        - isPublished
+ *      properties:
+ *        author:
+ *          type: string
+ *        title:
+ *          type: string
+ *        text:
+ *          type: string
+ *        date_created:
+ *          type: string
+ *          format: date-time
+ *        date_edited:
+ *          type: string
+ *          format: date-time
+ *        isPublished:
+ *          type: boolean
+ *
+ *    CreatePostInput:
+ *      type: object
+ *      required:
+ *        - author
+ *        - title
+ *        - text
+ *        - isPublished
+ *      properties:
+ *        author:
+ *          type: string
+ *          default: 63808e97af4d93aa971145f8
+ *        title:
+ *          type: string
+ *          default: title
+ *        text:
+ *          type: string
+ *          default: Some text
+ *        isPublished:
+ *          type: boolean
+ *          default: true
+ *
+ *    UpdatePostInput:
+ *      type: object
+ *      required:
+ *        - author
+ *        - title
+ *        - text
+ *        - isPublished
+ *      properties:
+ *        author:
+ *          type: string
+ *          default: 63808e97af4d93aa971145f8
+ *        title:
+ *          type: string
+ *          default: title
+ *        text:
+ *          type: string
+ *          default: Some text
+ *        isPublished:
+ *          type: boolean
+ *          default: true
+ *
+ */
 
 const PostSchema = new Schema<PostInterface>({
     author: { type: Schema.Types.ObjectId, ref: "User" },

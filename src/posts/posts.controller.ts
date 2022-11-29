@@ -28,7 +28,7 @@ export const post_get = async (req: Request, res: Response): Promise<any> => {
             _id: req.params.postid,
         });
         found_post == null
-            ? res.status(404).send("Post does not exist.")
+            ? res.status(404).send("Post not found.")
             : res.json(found_post);
     } catch (e: any) {
         throw new Error(e);
@@ -45,6 +45,7 @@ export const post_create = async (
         createPost(req.body);
         res.status(200).send("Post inserted");
     } catch (e: any) {
+        res.status(400).send("Bad request");
         throw new Error(e);
     }
 };
@@ -64,8 +65,8 @@ export const post_update = async (
         _id: postid,
         date_edited: Date.now(),
     };
-    await updatePost(postid, post);
-    res.status(200).send("Post updated");
+    const created_post = await updatePost(postid, post);
+    res.status(200).send({ created_post });
 };
 
 // delete 1 post
@@ -77,8 +78,8 @@ export const post_delete = async (
         const { postid } = req.params;
         const comments = await getComments({ post: postid });
         if (Object.keys(comments).length === 0) {
-            deletePost({ _id: req.params.postid });
-            res.status(200).send("Post deleted");
+            const deleted_post = deletePost({ _id: req.params.postid });
+            res.status(200).send({ message: "Post deleted", deleted_post });
         } else {
             res.status(400).send({
                 message: "You must delete all the comments first",

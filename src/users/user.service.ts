@@ -18,6 +18,6 @@ export const getUsers = async (): Promise<UserInterace[]> => {
 
 export const deleteUser = async (
     filter: FilterQuery<UserInterace>
-): Promise<void> => {
-    await User.findOneAndDelete(filter);
+): Promise<any> => {
+    return await User.findOneAndDelete(filter);
 };

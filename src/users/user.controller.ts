@@ -99,22 +99,30 @@ export const users_get = async (
         throw new Error(e);
     }
 };
-// FINISH THIS - TODO
-// export const user_delete = async (
-//     req: Request,
-//     res: Response
-// ): Promise<void> => {
-//     try {
-//         const { username, email, password } = req.body;
-//         const found_user = await getUser({ username }, { email });
-//         if (found_user != null) {
-//             await deleteUser(username);
-//         }
 
-//     } catch (e: any) {
-//         throw new Error(e);
-//     }
-// };
+export const user_delete = async (
+    req: Request,
+    res: Response
+): Promise<void> => {
+    try {
+        const { username } = req.body;
+        const found_user = await getUser({ username }, { email: username });
+        if (found_user != null) {
+            try {
+                const deleted_user = await deleteUser({
+                    username: found_user.username,
+                });
+                res.json({ deleted_user });
+            } catch (e: any) {
+                throw new Error(e);
+            }
+        } else {
+            res.status(400).send({ message: "User does not exist" });
+        }
+    } catch (e: any) {
+        throw new Error(e);
+    }
+};
 
 const checkPassword = async (
     pwd: string,
