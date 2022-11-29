@@ -2,10 +2,12 @@ import express from "express";
 import * as postController from "../posts/posts.controller";
 import * as commentController from "../comments/comments.controller";
 import * as userController from "../users/user.controller";
+import {checkHeaderForToken} from "../middleware/jwt"
 const router = express.Router();
 
+
+
 /* INDEX */
-router.get("/", userController.index_get);
 
 /**
  * @openapi
@@ -18,7 +20,10 @@ router.get("/", userController.index_get);
  *       200:
  *         description: Exists
  */
+router.get("/", userController.index_get);
 
+
+/* USER */
 /**
  * @openapi
  * '/api/v1/signup':
@@ -96,7 +101,7 @@ router.post("/login", userController.user_login);
  *        description: Bad request
  */
 //delete
-router.post("/delete", userController.user_delete);
+router.post("/delete", checkHeaderForToken, userController.user_delete);
 
 /**
  * @openapi
@@ -106,6 +111,8 @@ router.post("/delete", userController.user_delete);
  *     - User
  *     summary: Get all users
  *     responses:
+ *       403:
+ *         description: Unauthorized
  *       200:
  *         description: Success
  *         content:
@@ -114,7 +121,7 @@ router.post("/delete", userController.user_delete);
  *              $ref: '#/components/schemas/GetUsersResponse'
  */
 // get users
-router.get("/users", userController.users_get);
+router.get("/users", checkHeaderForToken, userController.users_get);
 
 /* POSTS */
 /**

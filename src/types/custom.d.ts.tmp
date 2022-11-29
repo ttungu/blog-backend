@@ -1,0 +1,22 @@
+// export {}
+// declare global {
+//     namespace Express {
+//         export interface Request {
+//         bearerHeader?: string,
+//         token?: string,
+
+//         }
+        
+//     }
+// }
+
+// export {}
+// declare global {
+//     namespace Express {
+//         export interface Response {
+//         locals?: object | null | undefined
+
+//         }
+        
+//     }
+// }

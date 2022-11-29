@@ -9,14 +9,17 @@ import {
 } from "../middleware/jwt";
 
 export const index_get = [
-    (req: any, res: Response, next: NextFunction) => {
+    (req: Request, res: Response, next: NextFunction) => {
         checkHeaderForToken(req, res, next);
     },
     (req: any, res: any, next: NextFunction) => {
         const { token } = req;
-        verifyUserToken(token, req, res, next);
+        if(token != undefined){
+            verifyUserToken(token, req, res, next);
+        }
+        
     },
-    (req: any, res: Response) => {
+    (req: Request, res: Response) => {
         const { authData } = res.locals;
         res.json({ message: "Hello form index", authData });
     },
