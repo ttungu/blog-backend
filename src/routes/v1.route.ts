@@ -2,7 +2,7 @@ import express from "express";
 import * as postController from "../posts/posts.controller";
 import * as commentController from "../comments/comments.controller";
 import * as userController from "../users/user.controller";
-import { checkHeaderForToken } from "../middleware/jwt";
+import { checkHeaderForToken, verifyUserToken } from "../middleware/jwt";
 const router = express.Router();
 
 /* INDEX */
@@ -18,7 +18,7 @@ const router = express.Router();
  *       200:
  *         description: Exists
  */
-router.get("/", checkHeaderForToken, userController.index_get);
+router.get("/", checkHeaderForToken, verifyUserToken, userController.index_get);
 
 /* USER */
 /**
@@ -98,7 +98,12 @@ router.post("/login", userController.user_login);
  *        description: Bad request
  */
 //delete
-router.post("/delete", checkHeaderForToken, userController.user_delete);
+router.post(
+    "/delete",
+    checkHeaderForToken,
+    verifyUserToken,
+    userController.user_delete
+);
 
 /**
  * @openapi
@@ -118,7 +123,12 @@ router.post("/delete", checkHeaderForToken, userController.user_delete);
  *              $ref: '#/components/schemas/GetUsersResponse'
  */
 // get users
-router.get("/users", checkHeaderForToken, userController.users_get);
+router.get(
+    "/users",
+    checkHeaderForToken,
+    verifyUserToken,
+    userController.users_get
+);
 
 /* POSTS */
 /**
@@ -141,7 +151,12 @@ router.get("/users", checkHeaderForToken, userController.users_get);
  *         description: Posts not found
  */
 //get all posts
-router.get("/posts", postController.posts_get);
+router.get(
+    "/posts",
+    checkHeaderForToken,
+    verifyUserToken,
+    postController.posts_get
+);
 
 /**
  * @openapi
@@ -167,7 +182,12 @@ router.get("/posts", postController.posts_get);
  *         description: Post not found
  */
 //get 1 post
-router.get("/posts/:postid", postController.post_get);
+router.get(
+    "/posts/:postid",
+    checkHeaderForToken,
+    verifyUserToken,
+    postController.post_get
+);
 
 /**
  * @openapi
@@ -193,7 +213,12 @@ router.get("/posts/:postid", postController.post_get);
  *         description: Bad request
  */
 //create
-router.post("/posts", postController.post_create);
+router.post(
+    "/posts",
+    checkHeaderForToken,
+    verifyUserToken,
+    postController.post_create
+);
 
 /**
  * @openapi
@@ -219,7 +244,12 @@ router.post("/posts", postController.post_create);
  *         description: Bad request
  */
 //update
-router.put("/posts/:postid", postController.post_update);
+router.put(
+    "/posts/:postid",
+    checkHeaderForToken,
+    verifyUserToken,
+    postController.post_update
+);
 
 /**
  * @openapi
@@ -251,7 +281,12 @@ router.put("/posts/:postid", postController.post_update);
  *         description: Bad request
  */
 //delete
-router.delete("/posts/:postid", postController.post_delete);
+router.delete(
+    "/posts/:postid",
+    checkHeaderForToken,
+    verifyUserToken,
+    postController.post_delete
+);
 
 /* COMMENTS */
 
@@ -281,7 +316,12 @@ router.delete("/posts/:postid", postController.post_delete);
  *         description: Comments not found
  */
 //get all
-router.get("/posts/:postid/comments", commentController.comments_get);
+router.get(
+    "/posts/:postid/comments",
+    checkHeaderForToken,
+    verifyUserToken,
+    commentController.comments_get
+);
 
 /**
  * @openapi
@@ -311,7 +351,12 @@ router.get("/posts/:postid/comments", commentController.comments_get);
  *       404:
  *         description: Comment not found
  */
-router.get("/posts/:postid/comments/:commentid", commentController.comment_get);
+router.get(
+    "/posts/:postid/comments/:commentid",
+    checkHeaderForToken,
+    verifyUserToken,
+    commentController.comment_get
+);
 
 /**
  * @openapi
@@ -343,7 +388,12 @@ router.get("/posts/:postid/comments/:commentid", commentController.comment_get);
  *         description: Bad request
  */
 //create
-router.post("/posts/:postid/comments", commentController.comment_create);
+router.post(
+    "/posts/:postid/comments",
+    checkHeaderForToken,
+    verifyUserToken,
+    commentController.comment_create
+);
 
 /**
  * @openapi
@@ -382,6 +432,8 @@ router.post("/posts/:postid/comments", commentController.comment_create);
 //update
 router.put(
     "/posts/:postid/comments/:commentid",
+    checkHeaderForToken,
+    verifyUserToken,
     commentController.comment_update
 );
 
@@ -422,6 +474,8 @@ router.put(
 //delete
 router.delete(
     "/posts/:postid/comments/:commentid",
+    checkHeaderForToken,
+    verifyUserToken,
     commentController.comment_delete
 );
 

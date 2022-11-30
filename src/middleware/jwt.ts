@@ -26,17 +26,21 @@ export const checkHeaderForToken = (
 
 //verify user's token
 export const verifyUserToken = (
-    token: string,
     req: RequestCustom,
     res: ResponseCustom,
     next: NextFunction
 ): string | JwtPayload | void => {
     try {
         if (process.env.JWT_SECRET !== undefined) {
-            const authData = verify(token, process.env.JWT_SECRET);
-            console.log(authData);
-            res.locals.authData = authData;
-            next();
+            const { token } = req as RequestCustom;
+            if (token != undefined) {
+                const authData = verify(token, process.env.JWT_SECRET);
+                console.log(authData);
+                res.locals.authData = authData;
+                next();
+            } else {
+                res.sendStatus(403);
+            }
         } else {
             console.log("hmmm");
             return next(new Error("JWT_SECRET is undefined."));
