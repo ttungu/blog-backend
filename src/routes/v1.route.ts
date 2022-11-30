@@ -2,10 +2,8 @@ import express from "express";
 import * as postController from "../posts/posts.controller";
 import * as commentController from "../comments/comments.controller";
 import * as userController from "../users/user.controller";
-import {checkHeaderForToken} from "../middleware/jwt"
+import { checkHeaderForToken } from "../middleware/jwt";
 const router = express.Router();
-
-
 
 /* INDEX */
 
@@ -20,8 +18,7 @@ const router = express.Router();
  *       200:
  *         description: Exists
  */
-router.get("/", userController.index_get);
-
+router.get("/", checkHeaderForToken, userController.index_get);
 
 /* USER */
 /**

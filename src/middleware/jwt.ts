@@ -1,6 +1,8 @@
 import { NextFunction } from "express";
 import { JwtPayload, verify, sign } from "jsonwebtoken";
 import { UserInterace } from "../users/user.model";
+import { RequestCustom } from "../types/RequestCustom";
+import { ResponseCustom } from "../types/ResponseCustom";
 
 // see if headers have jwt token (bearer) and assign token
 export const checkHeaderForToken = (
@@ -25,8 +27,8 @@ export const checkHeaderForToken = (
 //verify user's token
 export const verifyUserToken = (
     token: string,
-    req: Request,
-    res: any,
+    req: RequestCustom,
+    res: ResponseCustom,
     next: NextFunction
 ): string | JwtPayload | void => {
     try {

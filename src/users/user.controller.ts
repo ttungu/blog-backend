@@ -2,22 +2,16 @@ import { NextFunction, Request, Response } from "express";
 import { getUser, createUser, getUsers, deleteUser } from "./user.service";
 import { sendRegEmail } from "../middleware/mail";
 import * as bcrypt from "bcryptjs";
-import {
-    checkHeaderForToken,
-    verifyUserToken,
-    signUser,
-} from "../middleware/jwt";
+import { verifyUserToken, signUser } from "../middleware/jwt";
+import { RequestCustom } from "../types/RequestCustom";
+import { ResponseCustom } from "../types/ResponseCustom";
 
 export const index_get = [
     (req: Request, res: Response, next: NextFunction) => {
-        checkHeaderForToken(req, res, next);
-    },
-    (req: any, res: any, next: NextFunction) => {
-        const { token } = req;
-        if(token != undefined){
+        const { token } = req as RequestCustom;
+        if (token != undefined) {
             verifyUserToken(token, req, res, next);
         }
-        
     },
     (req: Request, res: Response) => {
         const { authData } = res.locals;

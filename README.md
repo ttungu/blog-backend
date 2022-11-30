@@ -14,3 +14,4 @@
 -   Express.js
 -   MongoDB (Mongoose)
 -   TypeScript
+-   ESLint + Prettier
