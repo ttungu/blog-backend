@@ -9,16 +9,16 @@ const router = express.Router();
 
 /**
  * @openapi
- * /index:
+ * /:
  *  get:
  *     tags:
  *     - Index
- *     description: Does nothing
+ *     description: Redirects to /docs
  *     responses:
  *       200:
- *         description: Exists
+ *         description: Success
  */
-router.get("/", checkHeaderForToken, verifyUserToken, userController.index_get);
+router.get("/", userController.index_get);
 
 /* USER */
 /**

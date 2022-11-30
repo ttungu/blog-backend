@@ -7,8 +7,7 @@ import { body, check, validationResult, oneOf } from "express-validator";
 
 export const index_get = [
     (req: Request, res: Response) => {
-        const { authData } = res.locals;
-        res.json({ message: "Hello form index", authData });
+        res.redirect('/docs')
     },
 ];
 
