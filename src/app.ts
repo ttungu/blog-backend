@@ -15,7 +15,7 @@ app.use(logger("dev"));
 app.use(express.json());
 
 app.use("/api/v1", v1Routes);
-
+app.use(helmet());
 // NOTE: Leave index routes like this (so I know it can be done this way)
 indexRoutes(app);
 

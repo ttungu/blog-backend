@@ -35,7 +35,6 @@ export const verifyUserToken = (
             const { token } = req as RequestCustom;
             if (token != undefined) {
                 const authData = verify(token, process.env.JWT_SECRET);
-                console.log(authData);
                 res.locals.authData = authData;
                 next();
             } else {

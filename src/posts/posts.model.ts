@@ -1,12 +1,5 @@
 import { Schema, model, Types, Document } from "mongoose";
-export interface PostInterface {
-    author: Types.ObjectId;
-    title: string;
-    text: string;
-    date_created: Date;
-    date_edited: Date;
-    isPublished: boolean;
-}
+
 /**
  * @openapi
  * components:
@@ -17,8 +10,6 @@ export interface PostInterface {
  *        - author
  *        - title
  *        - text
- *        - date_created
- *        - date_edited
  *        - isPublished
  *      properties:
  *        author:
@@ -79,6 +70,14 @@ export interface PostInterface {
  *          default: true
  *
  */
+export interface PostInterface {
+    author: Types.ObjectId;
+    title: string;
+    text: string;
+    date_created?: Date;
+    date_edited?: Date;
+    isPublished: boolean;
+}
 
 const PostSchema = new Schema<PostInterface>({
     author: { type: Schema.Types.ObjectId, ref: "User" },

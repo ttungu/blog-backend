@@ -84,32 +84,37 @@ export const user_login = [
             .withMessage("Username not valid"),
     ]),
     async (req: Request, res: Response, next: NextFunction): Promise<any> => {
-        try {
-            const { username, password } = req.body;
-            const found_user = await getUser({ username }, { email: username });
-            // check if user exists
-            if (found_user != null) {
-                //check pwd
-                const isCorrectPwd = await checkPassword(
-                    password,
-                    found_user.password
-                );
-                if (isCorrectPwd) {
-                    // sign user (jwt)
-                    const token = signUser(found_user);
-                    console.log(token);
-                    res.json({
-                        message: "User logged in.",
-                        token,
-                    });
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            res.status(400).send(errors);
+        } else {            
+            try {
+                const { username, password } = req.body;
+                const found_user = await getUser({ username }, { email: username });
+                // check if user exists
+                if (found_user != null) {
+                    //check pwd
+                    const isCorrectPwd = await checkPassword(
+                        password,
+                        found_user.password
+                    );
+                    if (isCorrectPwd) {
+                        // sign user (jwt)
+                        const token = signUser(found_user);
+                        console.log(token);
+                        res.json({
+                            message: "User logged in.",
+                            token,
+                        });
+                    } else {
+                        res.status(400).send({ message: "Invalid password" });
+                    }
                 } else {
-                    res.status(400).send({ message: "Invalid password" });
+                    res.status(400).send({ message: "User not found." });
                 }
-            } else {
-                res.status(400).send({ message: "User not found." });
+            } catch (e: any) {
+                throw new Error(e);
             }
-        } catch (e: any) {
-            throw new Error(e);
         }
     },
 ];

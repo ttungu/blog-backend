@@ -1,5 +1,5 @@
 import { FilterQuery, UpdateQuery } from "mongoose";
-import { PostInterface } from "posts/posts.model";
+import { PostInterface } from "../posts/posts.model";
 import Comment, { CommentInterface } from "./comments.model";
 
 // get comments
@@ -25,7 +25,7 @@ export const getOneComment = async (
 };
 
 // create comment
-export const createComment = (input: CommentInterface): Promise<any> => {
+export const createComment = async (input: CommentInterface): Promise<any> => {
     try {
         return Comment.create(input);
     } catch (e: any) {
@@ -34,7 +34,7 @@ export const createComment = (input: CommentInterface): Promise<any> => {
 };
 
 // update comment
-export const updateComment = (
+export const updateComment = async (
     filter: FilterQuery<CommentInterface>,
     updatedPost: UpdateQuery<CommentInterface>
 ) => {
@@ -46,7 +46,7 @@ export const updateComment = (
 };
 
 // delete comment
-export const deleteComment = (id: FilterQuery<CommentInterface>) => {
+export const deleteComment = async (id: FilterQuery<CommentInterface>) => {
     try {
         return Comment.findOneAndDelete(id);
     } catch (e: any) {
