@@ -1,6 +1,5 @@
-import { Express, Request, Response } from "express";
+import express, { Express, Request, Response } from "express";
 import swaggerJsdoc from "swagger-jsdoc";
-import swaggerUi from "swagger-ui-express";
 import { version } from "../../package.json";
 
 const options: swaggerJsdoc.Options = {
@@ -32,16 +31,11 @@ const options: swaggerJsdoc.Options = {
         "./src/comments/*.model.ts",
     ],
 };
+const app: Express = express();
 
-const swaggerSpec = swaggerJsdoc(options);
+export const swaggerSpec = swaggerJsdoc(options);
 
-const swaggerDocs = (app: Express, port: number | string) => {
-    app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
-
-    app.get("docs.json", (req: Request, res: Response) => {
-        res.setHeader("Content-type", "application/ json");
-        res.send(swaggerSpec);
-    });
+export const getSwaggerJson = (req: Request, res: Response) => {
+    res.setHeader("Content-type", "Application/json");
+    res.send(swaggerSpec);
 };
-
-export default swaggerDocs;
